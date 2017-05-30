@@ -26,17 +26,17 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 
 	public class DataSetAttributeWithCounts : DataSetAttribute
 	{
-		public Dictionary<string, PossibleValuesCounts> PossibleValueCounts { get; }
+		public Dictionary<int, PossibleValuesCounts> PossibleValueCounts { get; }
 
 		public double Entropy { get; set; }
 
-		public DataSetAttributeWithCounts(string name, HashSet<string> possibleValues, int valueIndex) : base(name, possibleValues, valueIndex)
+		public DataSetAttributeWithCounts(string name, HashSet<int> possibleValues, int valueIndex) : base(name, possibleValues, valueIndex)
 		{
-			PossibleValueCounts = new Dictionary<string, PossibleValuesCounts>(PossibleValues.Count);
+			PossibleValueCounts = new Dictionary<int, PossibleValuesCounts>(PossibleValues.Count);
 			Entropy = -999999999999;
 		}
 
-		public void UpdateWith(string attributeValue, bool valueOutput)
+		public void UpdateWith(int attributeValue, bool valueOutput)
 		{
 			PossibleValuesCounts possibleCount;
 			// Add it if it isn't there

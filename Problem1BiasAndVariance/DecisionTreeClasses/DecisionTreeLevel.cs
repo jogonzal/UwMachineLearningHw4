@@ -19,7 +19,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 		/// <summary>
 		/// The dictionary of subtrees
 		/// </summary>
-		private Dictionary<string, DecisionTreeLevel> _dictionaryOfSubTrees;
+		private Dictionary<int, DecisionTreeLevel> _dictionaryOfSubTrees;
 
 		private bool? _localValue;
 
@@ -78,11 +78,11 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			List<DataSetAttribute> newAttributes = _attributes.Where(a => a.Name != attributeWithMinEntropy.Name).ToList();
 
 			// Split the values in many sets
-			_dictionaryOfSubTrees = new Dictionary<string, DecisionTreeLevel>(attributeWithMinEntropy.PossibleValues.Count);
-			var dictionaryOfValues = new Dictionary<string, List<DataSetValue>>();
+			_dictionaryOfSubTrees = new Dictionary<int, DecisionTreeLevel>(attributeWithMinEntropy.PossibleValues.Count);
+			var dictionaryOfValues = new Dictionary<int, List<DataSetValue>>();
 			foreach (var dataSetValue in _values)
 			{
-				string value = dataSetValue.Values[attributeWithMinEntropy.ValueIndex];
+				var value = dataSetValue.Values[attributeWithMinEntropy.ValueIndex];
 				DecisionTreeLevel localTreeLevel;
 				List<DataSetValue> localValues;
 				if (!_dictionaryOfSubTrees.TryGetValue(value, out localTreeLevel))
@@ -116,7 +116,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			double chiTestValue = 0;
 			foreach (var possibleValueCounts in attributeToSplitOn.PossibleValueCounts)
 			{
-				string valueKey = possibleValueCounts.Key;
+				var valueKey = possibleValueCounts.Key;
 				int positiveValuesLocal = possibleValueCounts.Value.AppearWhenTrueCount;
 				int negativeValuesLocal = possibleValueCounts.Value.AppearWhenFalseCount;
 
@@ -169,14 +169,14 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			return attributeWithCounts;
 		}
 
-		private bool EvaluatePrivate(List<string> list)
+		private bool EvaluatePrivate(List<int> list)
 		{
 			if (_localValue.HasValue)
 			{
 				return _localValue.Value;
 			}
 
-			string attributeValue = list[_attributeToSplitOn.ValueIndex];
+			var attributeValue = list[_attributeToSplitOn.ValueIndex];
 
 			// Need to handle case where we've never seen the value
 			DecisionTreeLevel nextTreeLevel;
@@ -190,7 +190,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			return nextTreeLevel.Evaluate(list);
 		}
 
-		public bool Evaluate(List<string> list)
+		public bool Evaluate(List<int> list)
 		{
 			bool evaluated = EvaluatePrivate(list);
 			if (evaluated)
@@ -252,8 +252,8 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 				return _localValue + EvaluatedString();
 			}
 
-			var dict = new Dictionary<string, Dictionary<string, object>>();
-			var internalDict = new Dictionary<string, object>();
+			var dict = new Dictionary<string, Dictionary<int, object>>();
+			var internalDict = new Dictionary<int, object>();
 			dict[_attributeToSplitOn.Name + EvaluatedString()] = internalDict;
 			foreach (var keyValuePair in _dictionaryOfSubTrees)
 			{

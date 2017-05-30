@@ -11,14 +11,14 @@ namespace Problem1BiasAndVariance.DataSet
 			{
 				foreach (var dataSetAttribute in attributes)
 				{
-					string val = dataSetValue.Values[dataSetAttribute.ValueIndex];
+					var val = dataSetValue.Values[dataSetAttribute.ValueIndex];
 					bool isValueAllowed = dataSetAttribute.PossibleValues.Contains(val);
 
-					if (val == "?" && !isValueAllowed)
+					if (!isValueAllowed)
 					{
 						// questionmarks are nulls
-						dataSetAttribute.PossibleValues.Add("NULL");
-						dataSetValue.Values[dataSetAttribute.ValueIndex] = "NULL";
+						dataSetAttribute.PossibleValues.Add(int.MinValue);
+						dataSetValue.Values[dataSetAttribute.ValueIndex] = int.MinValue;
 						continue;
 					}
 

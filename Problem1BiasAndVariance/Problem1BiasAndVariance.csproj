@@ -55,9 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bagging\Bagging.cs" />
-    <Compile Include="DataSet\AttributeParser.cs" />
-    <Compile Include="DataSet\DataParser.cs" />
+    <Compile Include="Bagging.cs" />
     <Compile Include="DataSet\DataSetAttribute.cs" />
     <Compile Include="DataSet\DataSetCleaner.cs" />
     <Compile Include="DataSet\DataSetValue.cs" />
@@ -65,9 +63,11 @@
     <Compile Include="DecisionTreeClasses\DataSetAttributeWithCounts.cs" />
     <Compile Include="DecisionTreeClasses\DecisionTreeLevel.cs" />
     <Compile Include="DecisionTreeClasses\DecisionTreeScorer.cs" />
+    <Compile Include="DecisionTreeClasses\Inequality.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\ChiSquaredUtils.cs" />
+    <Compile Include="Statistics\PercentileCalculation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

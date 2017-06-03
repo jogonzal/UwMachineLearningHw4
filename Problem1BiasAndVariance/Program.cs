@@ -46,6 +46,11 @@ namespace Problem1BiasAndVariance
 			Console.WriteLine("Validating training set");
 			DataSetCleaner.ValidateDataSet(trainingData.Attributes, trainingData.Values);
 
+			Console.WriteLine("Getting test set...");
+			ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes);
+			Console.WriteLine("Validating test set");
+			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
+
 			Console.WriteLine("TotalSamplesForBiasAndVariance : {0}", TotalSamplesForBiasAndVariance);
 			List<int> sizeOfBaggers = new List<int>() { 1, 2, 5, 10 };
 			foreach (var sizeOfBagger in sizeOfBaggers)
@@ -55,7 +60,7 @@ namespace Problem1BiasAndVariance
 				for (int treeDepth = 1; treeDepth <= 3; treeDepth++)
 				{
 					Console.WriteLine("Running with tree depth {0}", treeDepth);
-					RunWithTreeLevels(trainingData, rnd, treeDepth, sizeOfBagger);
+					RunWithTreeLevels(trainingData, rnd, treeDepth, sizeOfBagger, testData);
 				}
 			}
 
@@ -63,7 +68,7 @@ namespace Problem1BiasAndVariance
 			Console.ReadKey();
 		}
 
-		private static void RunWithTreeLevels(ParserResults trainingData, Random rnd, int treeDepth, int sizeOfBaggers)
+		private static void RunWithTreeLevels(ParserResults trainingData, Random rnd, int treeDepth, int sizeOfBaggers, ParserResults testData)
 		{
 			List<List<List<DataSetValue>>> dataSetValuesForBagging = new List<List<List<DataSetValue>>>();
 			for (int i = 0; i < TotalSamplesForBiasAndVariance; i++)
@@ -94,11 +99,6 @@ namespace Problem1BiasAndVariance
 			Parallel.ForEach(listOfTreesToRunTestOn.SelectMany(s => s), l => l.TrimTree());
 
 			//string sampleSerializedTree = listOfTreesToRunTestOn[0][0].SerializeDecisionTree();
-
-			//Console.WriteLine("Getting test set...");
-			ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes);
-			//Console.WriteLine("Validating test set");
-			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
 
 			//Console.WriteLine("Evaluating trees against test data...");
 			double totalScoreAgainstTrainingData = 0;

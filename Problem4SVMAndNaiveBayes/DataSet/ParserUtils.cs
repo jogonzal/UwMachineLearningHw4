@@ -20,7 +20,7 @@ namespace Problem4SVMAndNaiveBayes.DataSet
 
 	public static class ParserUtils
 	{
-		public static ParserResults ParseData(string dataSetPath, List<DataSetAttribute> previousAttributes = null)
+		public static ParserResults ParseData(string dataSetPath, List<DataSetAttribute> previousAttributes = null, bool convertContinuousValues = true)
 		{
 			var lines = File.ReadAllLines(dataSetPath);
 			List<DataSetValue> rows = new List<DataSetValue>();
@@ -80,7 +80,6 @@ namespace Problem4SVMAndNaiveBayes.DataSet
 					{
 						dataSetAttribute.IsContinuous = true;
 						dataSetAttribute.Percentiles = PercentileCalculation.CalculatePercentiles(rows, dataSetAttribute.ValueIndex);
-						dataSetAttribute.PossibleValues = new HashSet<int>(Enumerable.Range(0, Program.PercentilesToBreakIn + 1));
 					}
 				}
 			}
@@ -90,12 +89,13 @@ namespace Problem4SVMAndNaiveBayes.DataSet
 			{
 				foreach (var dataSetAttribute in attributeList)
 				{
-					if (dataSetAttribute.IsContinuous)
+					if (dataSetAttribute.IsContinuous && convertContinuousValues)
 					{
 						int currentValue = dataSetValue.Values[dataSetAttribute.ValueIndex];
 						var percentiles = dataSetAttribute.Percentiles;
 						int tranformedValue = PercentileCalculation.CalculatePercentileBucket(dataSetAttribute, currentValue);
 						dataSetValue.Values[dataSetAttribute.ValueIndex] = tranformedValue;
+						dataSetAttribute.PossibleValues = new HashSet<int>(Enumerable.Range(0, Program.PercentilesToBreakIn + 1));
 					}
 				}
 			}

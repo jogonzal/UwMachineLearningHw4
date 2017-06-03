@@ -12,6 +12,11 @@ namespace Problem4SVMAndNaiveBayes.DataSet
 				foreach (var dataSetAttribute in attributes)
 				{
 					var val = dataSetValue.Values[dataSetAttribute.ValueIndex];
+					if (dataSetAttribute.IsContinuous && dataSetAttribute.PossibleValues == null)
+					{
+						continue;
+					}
+
 					bool isValueAllowed = dataSetAttribute.PossibleValues.Contains(val);
 
 					if (!isValueAllowed)

@@ -50,6 +50,7 @@
     <Compile Include="DataSet\DataSetAttribute.cs" />
     <Compile Include="DataSet\DataSetCleaner.cs" />
     <Compile Include="DataSet\DataSetValue.cs" />
+    <Compile Include="DataSet\LibSvmConverter.cs" />
     <Compile Include="DataSet\ParserUtils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,7 +62,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libsvm.dll" />
+    <Content Include="libsvm.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

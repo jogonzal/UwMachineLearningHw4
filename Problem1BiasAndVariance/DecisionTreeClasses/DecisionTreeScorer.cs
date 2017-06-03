@@ -31,6 +31,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 		public void PrintTotalScore()
 		{
 			Console.WriteLine($"Score for tree with ({_decisionTreeDescription}) = {GetTotalScore()}. Total nodes: {NodeCount}");
+			Console.WriteLine($"PositiveHits:{1.0*PositiveHit/(FalsePositive + PositiveHit)} NegativeHit:{1.0*NegativeHits/(FalseNegative + NegativeHits)}");
 		}
 	}
 
@@ -47,20 +48,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			foreach (var testDataSetValue in testDataSetValues)
 			{
 				// Poll the trees
-				int positiveCount = 0, negativeCount = 0;
-				foreach (var decisionTree in decisionTrees)
-				{
-					bool localOutput = decisionTree.Evaluate(testDataSetValue.Values);
-					if (localOutput)
-					{
-						positiveCount++;
-					}
-					else
-					{
-						negativeCount++;
-					}
-				}
-				bool output = positiveCount > negativeCount;
+				var output = CalculatePrediction(decisionTrees, testDataSetValue);
 
 				if (output && testDataSetValue.Output)
 				{
@@ -83,6 +71,25 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			score.NodeCount = decisionTrees.Sum(s => s.GetNodeCount());
 
 			return score;
+		}
+
+		public static bool CalculatePrediction(List<DecisionTreeLevel> decisionTrees, DataSetValue inputValues)
+		{
+			int positiveCount = 0, negativeCount = 0;
+			foreach (var decisionTree in decisionTrees)
+			{
+				bool localOutput = decisionTree.Evaluate(inputValues.Values);
+				if (localOutput)
+				{
+					positiveCount++;
+				}
+				else
+				{
+					negativeCount++;
+				}
+			}
+			bool output = positiveCount > negativeCount;
+			return output;
 		}
 	}
 }

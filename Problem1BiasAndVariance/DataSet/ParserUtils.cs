@@ -19,7 +19,7 @@ namespace Problem1BiasAndVariance.DataSet
 
 	public static class ParserUtils
 	{
-		public static ParserResults ParseData(string dataSetPath)
+		public static ParserResults ParseData(string dataSetPath, List<DataSetAttribute> previousAttributes = null)
 		{
 			var lines = File.ReadAllLines(dataSetPath);
 			List<DataSetValue> rows = new List<DataSetValue>();
@@ -41,42 +41,46 @@ namespace Problem1BiasAndVariance.DataSet
 				rows.Add(new DataSetValue(values, classValue == 1));
 			}
 
-			int i = 1;
-			var attributeList = new List<DataSetAttribute>()
+			List<DataSetAttribute> attributeList = previousAttributes;
+			if (previousAttributes == null)
 			{
-				new DataSetAttribute("LIMIT_BAL", null, i++),
-				new DataSetAttribute("SEX", new HashSet<int>() {1, 2}, i++),
-				new DataSetAttribute("EDUCATION", new HashSet<int>() {1, 2, 3}, i++),
-				new DataSetAttribute("MARRIAGE", new HashSet<int>() {1, 2}, i++),
-				new DataSetAttribute("AGE", null, i++),
-				new DataSetAttribute("PAY_0", null, i++),
-				new DataSetAttribute("PAY_2", null, i++),
-				new DataSetAttribute("PAY_3", null, i++),
-				new DataSetAttribute("PAY_4", null, i++),
-				new DataSetAttribute("PAY_5", null, i++),
-				new DataSetAttribute("PAY_6", null, i++),
-				new DataSetAttribute("BILL_AMT1", null, i++),
-				new DataSetAttribute("BILL_AMT2", null, i++),
-				new DataSetAttribute("BILL_AMT3", null, i++),
-				new DataSetAttribute("BILL_AMT4", null, i++),
-				new DataSetAttribute("BILL_AMT5", null, i++),
-				new DataSetAttribute("BILL_AMT6", null, i++),
-				new DataSetAttribute("PAY_AMT1", null, i++),
-				new DataSetAttribute("PAY_AMT2", null, i++),
-				new DataSetAttribute("PAY_AMT3", null, i++),
-				new DataSetAttribute("PAY_AMT4", null, i++),
-				new DataSetAttribute("PAY_AMT5", null, i++),
-				new DataSetAttribute("PAY_AMT6", null, i++),
-			};
-
-			// Calculate percentiles for all numeric fields and classify them
-			foreach (var dataSetAttribute in attributeList)
-			{
-				if (dataSetAttribute.PossibleValues == null)
+				int i = 1;
+				attributeList = new List<DataSetAttribute>()
 				{
-					dataSetAttribute.IsContinuous = true;
-					dataSetAttribute.Percentiles = PercentileCalculation.CalculatePercentiles(rows, dataSetAttribute.ValueIndex);
-					dataSetAttribute.PossibleValues = new HashSet<int>(Enumerable.Range(0, Program.PercentilesToBreakIn));
+					new DataSetAttribute("LIMIT_BAL", null, 1),
+					new DataSetAttribute("SEX", new HashSet<int>() {1, 2}, 2),
+					new DataSetAttribute("EDUCATION", new HashSet<int>() {0, 1, 2, 3, 4, 5, 6}, 3),
+					new DataSetAttribute("MARRIAGE", new HashSet<int>() {0, 1, 2, 3}, 4),
+					new DataSetAttribute("AGE", null, 5),
+					new DataSetAttribute("PAY_0", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 6),
+					new DataSetAttribute("PAY_2", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 7),
+					new DataSetAttribute("PAY_3", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 8),
+					new DataSetAttribute("PAY_4", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 9),
+					new DataSetAttribute("PAY_5", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 10),
+					new DataSetAttribute("PAY_6", new HashSet<int>() {-2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8}, 11),
+					new DataSetAttribute("BILL_AMT1", null, 12),
+					new DataSetAttribute("BILL_AMT2", null, 13),
+					new DataSetAttribute("BILL_AMT3", null, 14),
+					new DataSetAttribute("BILL_AMT4", null, 15),
+					new DataSetAttribute("BILL_AMT5", null, 16),
+					new DataSetAttribute("BILL_AMT6", null, 17),
+					new DataSetAttribute("PAY_AMT1", null, 18),
+					new DataSetAttribute("PAY_AMT2", null, 19),
+					new DataSetAttribute("PAY_AMT3", null, 20),
+					new DataSetAttribute("PAY_AMT4", null, 21),
+					new DataSetAttribute("PAY_AMT5", null, 22),
+					new DataSetAttribute("PAY_AMT6", null, 23),
+				};
+
+				// Calculate percentiles for all numeric fields and classify them
+				foreach (var dataSetAttribute in attributeList)
+				{
+					if (dataSetAttribute.PossibleValues == null)
+					{
+						dataSetAttribute.IsContinuous = true;
+						dataSetAttribute.Percentiles = PercentileCalculation.CalculatePercentiles(rows, dataSetAttribute.ValueIndex);
+						dataSetAttribute.PossibleValues = new HashSet<int>(Enumerable.Range(0, Program.PercentilesToBreakIn + 1));
+					}
 				}
 			}
 
@@ -87,9 +91,10 @@ namespace Problem1BiasAndVariance.DataSet
 				{
 					if (dataSetAttribute.IsContinuous)
 					{
-						dataSetValue.Values[dataSetAttribute.ValueIndex] =
-							PercentileCalculation.CalculatePercentileBucket(dataSetAttribute,
-								dataSetValue.Values[dataSetAttribute.ValueIndex]);
+						int currentValue = dataSetValue.Values[dataSetAttribute.ValueIndex];
+						var percentiles = dataSetAttribute.Percentiles;
+						int tranformedValue = PercentileCalculation.CalculatePercentileBucket(dataSetAttribute, currentValue);
+						dataSetValue.Values[dataSetAttribute.ValueIndex] = tranformedValue;
 					}
 				}
 			}

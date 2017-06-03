@@ -16,14 +16,6 @@ namespace Problem1BiasAndVariance.DataSet
 
 					if (!isValueAllowed)
 					{
-						// questionmarks are nulls
-						dataSetAttribute.PossibleValues.Add(int.MinValue);
-						dataSetValue.Values[dataSetAttribute.ValueIndex] = int.MinValue;
-						continue;
-					}
-
-					if (!isValueAllowed)
-					{
 						throw new InvalidOperationException($"Failed to find value {val} of type {dataSetAttribute.Name}. Allowed list is {string.Join(",", dataSetAttribute.PossibleValues)}");
 					}
 				}

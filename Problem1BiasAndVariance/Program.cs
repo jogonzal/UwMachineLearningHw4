@@ -5,13 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Problem1BiasAndVariance.DataSet;
 using Problem1BiasAndVariance.DecisionTreeClasses;
+using Problem1BiasAndVariance.Statistics;
 
 namespace Problem1BiasAndVariance
 {
 	class Program
 	{
-		private const double ChiTestLimit = 0;
-		public static int PercentilesToBreakIn = 3;
+		public static int PercentilesToBreakIn = 10;
+		public static int TotalSamplesForBiasAndVariance = 30;
 
 		private static string DataSetPath => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\bankddefaultdataset\training.csv");
 		private static string TestSetPath => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\bankddefaultdataset\testing.csv");
@@ -42,44 +43,97 @@ namespace Problem1BiasAndVariance
 			Random rnd = new Random();
 			Console.WriteLine("Reading training data...");
 			ParserResults trainingData = ParserUtils.ParseData(DataSetPath);
-
-			Console.WriteLine("Validating data set");
+			Console.WriteLine("Validating training set");
 			DataSetCleaner.ValidateDataSet(trainingData.Attributes, trainingData.Values);
 
-			List<List<List<DataSetValue>>> dataSetValuesForBagging = new List<List<List<DataSetValue>>>()
+			List<int> SizeOfBaggers = new List<int>() { 1, 2, 5, 10 };
+			foreach (var sizeOfBagger in SizeOfBaggers)
 			{
-				Bagging.ProduceDifferentDataSets(trainingData.Values, 1, rnd),
-				//Bagging.ProduceDifferentDataSets(trainingData.Values, 3, rnd),
-				//Bagging.ProduceDifferentDataSets(trainingData.Values, 5, rnd),
-				//Bagging.ProduceDifferentDataSets(trainingData.Values, 10, rnd),
-				//Bagging.ProduceDifferentDataSets(trainingData.Values, 20, rnd),
-			};
+				//Console.WriteLine("Running with SizeOfBaggers {0} and TotalSamplesForBiasAndVariance {1}", sizeOfBagger, TotalSamplesForBiasAndVariance);
+				// Run the algorithm with different tree depths
+				for (int treeDepth = 1; treeDepth <= 3; treeDepth++)
+				{
+					//Console.WriteLine("Running with tree depth {0}", treeDepth);
+					RunWithTreeLevels(trainingData, rnd, treeDepth, sizeOfBagger);
+				}
+			}
+
+			Console.WriteLine("Press any key to quit...");
+			Console.ReadKey();
+		}
+
+		private static void RunWithTreeLevels(ParserResults trainingData, Random rnd, int treeDepth, int sizeOfBaggers)
+		{
+			List<List<List<DataSetValue>>> dataSetValuesForBagging = new List<List<List<DataSetValue>>>();
+			for (int i = 0; i < TotalSamplesForBiasAndVariance; i++)
+			{
+				dataSetValuesForBagging.Add(Bagging.ProduceDifferentDataSets(trainingData.Values, sizeOfBaggers, rnd));
+			}
 
 			// Initialize the required trees
 			List<List<DecisionTreeLevel>> listOfTreesToRunTestOn = new List<List<DecisionTreeLevel>>();
 			foreach (var dataSetForBagging in dataSetValuesForBagging)
 			{
-				listOfTreesToRunTestOn.Add(dataSetForBagging.Select(x => new DecisionTreeLevel(ChiTestLimit, trainingData.Attributes, x)).ToList());
+				// Foe each bagger, for each dataset, create a new tree
+				listOfTreesToRunTestOn.Add(
+					dataSetForBagging.Select(
+						dataSet => new DecisionTreeLevel(0, trainingData.Attributes, dataSet, maximumDepth: treeDepth)).ToList());
 			}
 
-			Console.WriteLine("Runnind D3 on all trees in parallel...");
 			Parallel.ForEach(listOfTreesToRunTestOn.SelectMany(s => s), l => l.D3());
-
-			Console.WriteLine("Deleting unecessary nodes...");
 			Parallel.ForEach(listOfTreesToRunTestOn.SelectMany(s => s), l => l.TrimTree());
 
-			Console.WriteLine("Getting test data set...");
-			ParserResults testData = ParserUtils.ParseData(TestSetPath);
+			//string sampleSerializedTree = listOfTreesToRunTestOn[0][0].SerializeDecisionTree();
 
-			Console.WriteLine("Evaluating trees against test data...");
-			foreach (List<DecisionTreeLevel> baggingSetOfTrees in listOfTreesToRunTestOn)
+			//Console.WriteLine("Getting test set...");
+			//ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes);
+			//Console.WriteLine("Validating test set");
+			//DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
+
+			//Console.WriteLine("Evaluating trees against test data...");
+			//foreach (List<DecisionTreeLevel> baggingSetOfTrees in listOfTreesToRunTestOn)
+			//{
+			//	DecisionTreeScore score = DecisionTreeScorer.ScoreWithTreeWithTestSet(baggingSetOfTrees, testData.Values);
+			//	score.PrintTotalScore();
+			//}
+
+			double variance = 0;
+			double bias = 0;
+			// Calculate biar and variance for all trees
+			foreach (var trainingDataValue in trainingData.Values)
 			{
-				DecisionTreeScore score = DecisionTreeScorer.ScoreWithTreeWithTestSet(baggingSetOfTrees, testData.Values);
-				score.PrintTotalScore();
+				double realValue = Transformer.BoolToDouble(trainingDataValue.Output);
+				List<double> allPredictions = new List<double>(listOfTreesToRunTestOn.Count);
+				foreach (var bagger in listOfTreesToRunTestOn)
+				{
+					bool prediction = DecisionTreeScorer.CalculatePrediction(bagger, trainingDataValue);
+					allPredictions.Add(Transformer.BoolToDouble(prediction));
+				}
+				double mode = ModeFinder.FindMode(allPredictions);
+				double averagePrediction = allPredictions.Average();
+
+				// Now that we have the mode, realValue, and average of all predictions, we can calculate variance and bias
+				double varianceForThisDataPoint = 0;
+				double diffOfRealValueAndAveragePrediction = (realValue - averagePrediction);
+				double biasForThisDataPoint = diffOfRealValueAndAveragePrediction*diffOfRealValueAndAveragePrediction;
+				foreach (var prediction in allPredictions)
+				{
+					var diffForModeAndPrediction = prediction - mode;
+					varianceForThisDataPoint += diffForModeAndPrediction*diffForModeAndPrediction;
+				}
+				varianceForThisDataPoint = varianceForThisDataPoint/allPredictions.Count;
+
+				// Accumulate
+				variance += varianceForThisDataPoint;
+				bias += biasForThisDataPoint;
 			}
 
-			Console.WriteLine("Press any key to quit...");
-			Console.ReadKey();
+			variance = variance/trainingData.Values.Count;
+			bias = bias/trainingData.Values.Count;
+
+			//Console.WriteLine("Variance: {0}. \t Bias: {1}", variance, bias);
+			Console.WriteLine(bias);
+			Console.WriteLine(variance);
 		}
 	}
 }

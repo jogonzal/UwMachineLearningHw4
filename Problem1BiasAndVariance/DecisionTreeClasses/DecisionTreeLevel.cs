@@ -10,6 +10,8 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 	public class DecisionTreeLevel
 	{
 		public double ChiTestLimit { get; }
+		public int CurrentDepth { get; set; }
+		public int? MaximumDepth { get; }
 
 		/// <summary>
 		/// Keep track on the attribute we split on
@@ -28,9 +30,11 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 		private List<DataSetAttribute> _attributes;
 		private List<DataSetValue> _values;
 
-		public DecisionTreeLevel(double chiTestLimit, List<DataSetAttribute> attributes, List<DataSetValue> values)
+		public DecisionTreeLevel(double chiTestLimit, List<DataSetAttribute> attributes, List<DataSetValue> values, int currentDepth = 0, int? maximumDepth = null)
 		{
 			ChiTestLimit = chiTestLimit;
+			CurrentDepth = currentDepth;
+			MaximumDepth = maximumDepth;
 			_attributes = attributes;
 			_values = values;
 		}
@@ -57,6 +61,13 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 			if (_attributes.Count == 0)
 			{
 				// Can't split anymore. We'll decide on the most prevalent value
+				_localValue = totalTrueValues > totalFalseValues;
+				return;
+			}
+
+			if (CurrentDepth == MaximumDepth)
+			{
+				// We've reached the depth limit
 				_localValue = totalTrueValues > totalFalseValues;
 				return;
 			}
@@ -89,7 +100,7 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 				{
 					localValues = new List<DataSetValue>();
 					dictionaryOfValues[value] = localValues;
-					localTreeLevel = new DecisionTreeLevel(ChiTestLimit, newAttributes, localValues);
+					localTreeLevel = new DecisionTreeLevel(ChiTestLimit, newAttributes, localValues, currentDepth:CurrentDepth + 1, maximumDepth:MaximumDepth);
 					_dictionaryOfSubTrees[value] = localTreeLevel;
 				}
 				else

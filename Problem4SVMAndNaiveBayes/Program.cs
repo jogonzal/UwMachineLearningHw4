@@ -59,10 +59,14 @@ namespace Problem1BiasAndVariance
 			SVMProblem problem = SVMProblemHelper.Load(svmTrainingPath);
 			SVMProblem testProblem = SVMProblemHelper.Load(svmTestPath);
 
+			SVMKernelType kernel = SVMKernelType.LINEAR;
+
+			Console.WriteLine($"Using kernel {kernel}");
+
 			SVMParameter parameter = new SVMParameter
 			{
 				Type = SVMType.C_SVC,
-				Kernel = SVMKernelType.RBF,
+				Kernel = kernel,
 				C = 1,
 				Gamma = 1
 			};

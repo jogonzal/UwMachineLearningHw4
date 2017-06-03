@@ -46,14 +46,15 @@ namespace Problem1BiasAndVariance
 			Console.WriteLine("Validating training set");
 			DataSetCleaner.ValidateDataSet(trainingData.Attributes, trainingData.Values);
 
-			List<int> SizeOfBaggers = new List<int>() { 1, 2, 5, 10 };
-			foreach (var sizeOfBagger in SizeOfBaggers)
+			Console.WriteLine("TotalSamplesForBiasAndVariance : {0}", TotalSamplesForBiasAndVariance);
+			List<int> sizeOfBaggers = new List<int>() { 1, 2, 5, 10 };
+			foreach (var sizeOfBagger in sizeOfBaggers)
 			{
-				//Console.WriteLine("Running with SizeOfBaggers {0} and TotalSamplesForBiasAndVariance {1}", sizeOfBagger, TotalSamplesForBiasAndVariance);
+				Console.WriteLine("Running with SizeOfBaggers {0}", sizeOfBagger);
 				// Run the algorithm with different tree depths
 				for (int treeDepth = 1; treeDepth <= 3; treeDepth++)
 				{
-					//Console.WriteLine("Running with tree depth {0}", treeDepth);
+					Console.WriteLine("Running with tree depth {0}", treeDepth);
 					RunWithTreeLevels(trainingData, rnd, treeDepth, sizeOfBagger);
 				}
 			}
@@ -131,9 +132,9 @@ namespace Problem1BiasAndVariance
 			variance = variance/trainingData.Values.Count;
 			bias = bias/trainingData.Values.Count;
 
-			//Console.WriteLine("Variance: {0}. \t Bias: {1}", variance, bias);
-			Console.WriteLine(bias);
-			Console.WriteLine(variance);
+			Console.WriteLine("Variance: {0}. \t Bias: {1}", variance, bias);
+			//Console.WriteLine(bias);
+			//Console.WriteLine(variance);
 		}
 	}
 }

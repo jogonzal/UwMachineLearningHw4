@@ -68,6 +68,7 @@ namespace Problem1BiasAndVariance
 			List<List<List<DataSetValue>>> dataSetValuesForBagging = new List<List<List<DataSetValue>>>();
 			for (int i = 0; i < TotalSamplesForBiasAndVariance; i++)
 			{
+				// Two layer sampling
 				List<DataSetValue> layer1Sampling = Bagging.ProduceDifferentDataSets(trainingData.Values, 1, rnd).Single();
 				if (sizeOfBaggers == 1)
 				{

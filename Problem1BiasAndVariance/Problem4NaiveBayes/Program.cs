@@ -11,5 +11,7 @@ namespace Problem4NaiveBayes
 		static void Main(string[] args)
 		{
 		}
+
+		public static int PercentilesToBreakIn = 10;
 	}
 }

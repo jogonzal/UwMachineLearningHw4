@@ -56,7 +56,7 @@ namespace Problem4SVM
 			SVMProblem problem = SVMProblemHelper.Load(svmTrainingPath);
 			SVMProblem testProblem = SVMProblemHelper.Load(svmTestPath);
 
-			SVMKernelType kernel = SVMKernelType.LINEAR;
+			SVMKernelType kernel = SVMKernelType.POLY;
 
 			Console.WriteLine($"Using kernel {kernel}");
 

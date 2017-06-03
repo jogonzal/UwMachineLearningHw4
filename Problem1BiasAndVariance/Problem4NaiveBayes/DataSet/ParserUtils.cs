@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Problem1BiasAndVariance;
-using Problem4SVMAndNaiveBayes.Statistics;
+using Problem4NaiveBayes.Statistics;
 
-namespace Problem4SVMAndNaiveBayes.DataSet
+namespace Problem4NaiveBayes.DataSet
 {
 	public class ParserResults
 	{

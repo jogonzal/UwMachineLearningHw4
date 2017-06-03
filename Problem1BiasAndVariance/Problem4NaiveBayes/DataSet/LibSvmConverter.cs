@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Problem4SVMAndNaiveBayes.DataSet
+namespace Problem4NaiveBayes.DataSet
 {
 	public static class LibSvmConverter
 	{

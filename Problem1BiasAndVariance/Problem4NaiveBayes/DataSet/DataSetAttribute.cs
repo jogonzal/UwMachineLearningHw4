@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Problem4SVMAndNaiveBayes.DataSet
+namespace Problem4NaiveBayes.DataSet
 {
 	public class DataSetAttribute
 	{

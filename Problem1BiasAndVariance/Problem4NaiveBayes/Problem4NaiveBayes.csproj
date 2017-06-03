@@ -46,8 +46,11 @@
     <Compile Include="DataSet\DataSetAttribute.cs" />
     <Compile Include="DataSet\DataSetCleaner.cs" />
     <Compile Include="DataSet\DataSetValue.cs" />
-    <Compile Include="DataSet\LibSvmConverter.cs" />
     <Compile Include="DataSet\ParserUtils.cs" />
+    <Compile Include="NaiveBayes\NaiveBayesCalculator.cs" />
+    <Compile Include="NaiveBayes\NaiveBayesDataTransform.cs" />
+    <Compile Include="Parsing\EmailExample.cs" />
+    <Compile Include="Parsing\BucketCount.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics\PercentileCalculation.cs" />

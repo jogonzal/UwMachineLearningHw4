@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Problem4NaiveBayes.DataSet;
+using Problem4SVM;
 
 namespace Problem4NaiveBayes.Statistics
 {

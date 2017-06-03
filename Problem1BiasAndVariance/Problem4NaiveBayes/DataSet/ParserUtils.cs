@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Problem4NaiveBayes.Statistics;
+using Problem4SVM;
 
 namespace Problem4NaiveBayes.DataSet
 {

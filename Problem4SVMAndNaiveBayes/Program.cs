@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using LibSVMsharp;
 using LibSVMsharp.Helpers;
-using Problem4SVMAndNaiveBayes.DataSet;
+using Problem4SVM.DataSet;
 
-namespace Problem1BiasAndVariance
+namespace Problem4SVM
 {
 	class Program
 	{

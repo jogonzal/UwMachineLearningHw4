@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Problem1BiasAndVariance;
-using Problem4SVMAndNaiveBayes.DataSet;
+using Problem4SVM.DataSet;
 
-namespace Problem4SVMAndNaiveBayes.Statistics
+namespace Problem4SVM.Statistics
 {
 	public static class PercentileCalculation
 	{

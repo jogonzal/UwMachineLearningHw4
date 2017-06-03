@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Problem4SVM.DataSet
+namespace Problem4SVMAndNaiveBayes.DataSet
 {
 	public static class DataSetCleaner
 	{

@@ -66,6 +66,7 @@
     <Compile Include="DecisionTreeClasses\Inequality.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statistics\BiasAndVarianceCalculator.cs" />
     <Compile Include="Statistics\ChiSquaredUtils.cs" />
     <Compile Include="Statistics\ModeFinder.cs" />
     <Compile Include="Statistics\PercentileCalculation.cs" />

@@ -87,54 +87,33 @@ namespace Problem1BiasAndVariance
 			//string sampleSerializedTree = listOfTreesToRunTestOn[0][0].SerializeDecisionTree();
 
 			//Console.WriteLine("Getting test set...");
-			//ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes);
+			ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes);
 			//Console.WriteLine("Validating test set");
-			//DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
+			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
 
 			//Console.WriteLine("Evaluating trees against test data...");
-			//foreach (List<DecisionTreeLevel> baggingSetOfTrees in listOfTreesToRunTestOn)
-			//{
-			//	DecisionTreeScore score = DecisionTreeScorer.ScoreWithTreeWithTestSet(baggingSetOfTrees, testData.Values);
-			//	score.PrintTotalScore();
-			//}
-
-			double variance = 0;
-			double bias = 0;
-			// Calculate biar and variance for all trees
-			foreach (var trainingDataValue in trainingData.Values)
+			double totalScoreAgainstTrainingData = 0;
+			double totalScoreAgainstTestData = 0;
+			foreach (List<DecisionTreeLevel> baggingSetOfTrees in listOfTreesToRunTestOn)
 			{
-				double realValue = Transformer.BoolToDouble(trainingDataValue.Output);
-				List<double> allPredictions = new List<double>(listOfTreesToRunTestOn.Count);
-				foreach (var bagger in listOfTreesToRunTestOn)
-				{
-					bool prediction = DecisionTreeScorer.CalculatePrediction(bagger, trainingDataValue);
-					allPredictions.Add(Transformer.BoolToDouble(prediction));
-				}
-				double mode = ModeFinder.FindMode(allPredictions);
-				double averagePrediction = allPredictions.Average();
+				DecisionTreeScore scoreAgainstTrainingData = DecisionTreeScorer.ScoreWithTreeWithTestSet(baggingSetOfTrees, trainingData.Values);
+				DecisionTreeScore scoreAgainstTestData = DecisionTreeScorer.ScoreWithTreeWithTestSet(baggingSetOfTrees, testData.Values);
+				//score.PrintTotalScore();
 
-				// Now that we have the mode, realValue, and average of all predictions, we can calculate variance and bias
-				double varianceForThisDataPoint = 0;
-				double diffOfRealValueAndAveragePrediction = (realValue - averagePrediction);
-				double biasForThisDataPoint = diffOfRealValueAndAveragePrediction*diffOfRealValueAndAveragePrediction;
-				foreach (var prediction in allPredictions)
-				{
-					var diffForModeAndPrediction = prediction - mode;
-					varianceForThisDataPoint += diffForModeAndPrediction*diffForModeAndPrediction;
-				}
-				varianceForThisDataPoint = varianceForThisDataPoint/allPredictions.Count;
-
-				// Accumulate
-				variance += varianceForThisDataPoint;
-				bias += biasForThisDataPoint;
+				totalScoreAgainstTrainingData += scoreAgainstTrainingData.GetTotalScore();
+				totalScoreAgainstTestData += scoreAgainstTestData.GetTotalScore();
 			}
+			totalScoreAgainstTrainingData = totalScoreAgainstTrainingData/listOfTreesToRunTestOn.Count;
+			totalScoreAgainstTestData = totalScoreAgainstTestData / listOfTreesToRunTestOn.Count;
 
-			variance = variance/trainingData.Values.Count;
-			bias = bias/trainingData.Values.Count;
+			double bias;
+			double variance = BiasAndVarianceCalculator.CalculateBiasAndVariance(trainingData, listOfTreesToRunTestOn, out bias);
 
-			Console.WriteLine("Variance: {0}. \t Bias: {1}", variance, bias);
+			Console.WriteLine("Variance: {0:0.00000}. Bias: {1:0.00000}. ScoreTraining : {2:0.00000}, ScoreTest : {3:0.00000}", variance, bias, totalScoreAgainstTrainingData, totalScoreAgainstTestData);
 			//Console.WriteLine(bias);
 			//Console.WriteLine(variance);
+			//Console.WriteLine(totalScoreAgainstTrainingData);
+			//Console.WriteLine(totalScoreAgainstTestData);
 		}
 	}
 }

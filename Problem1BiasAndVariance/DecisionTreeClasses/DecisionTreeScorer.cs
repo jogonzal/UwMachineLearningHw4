@@ -30,8 +30,8 @@ namespace Problem1BiasAndVariance.DecisionTreeClasses
 
 		public void PrintTotalScore()
 		{
-			Console.WriteLine($"Score for tree with ({_decisionTreeDescription}) = {GetTotalScore()}. Total nodes: {NodeCount}");
-			Console.WriteLine($"PositiveHits:{1.0*PositiveHit/(FalsePositive + PositiveHit)} NegativeHit:{1.0*NegativeHits/(FalseNegative + NegativeHits)}");
+			Console.WriteLine($"Score: {GetTotalScore()}");
+			//Console.WriteLine($"PositiveHits:{1.0*PositiveHit/(FalsePositive + PositiveHit)} NegativeHit:{1.0*NegativeHits/(FalseNegative + NegativeHits)}");
 		}
 	}
 

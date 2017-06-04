@@ -56,15 +56,16 @@ namespace Problem4SVM
 
 			List<int> kernelsToRunIn = new List<int>()
 			{
-				2, 3
+				0, 1, 2, 3
 			};
 
 			string originalTrainingFile = "originalTraining.txt";
 			LibSvmConverter.ConvertToLibSvm(trainingData.Values, "originalTraining.txt");
 
 			// Run all kernels in parallel
-			foreach (var kernel in kernelsToRunIn)
+			kernelsToRunIn.AsParallel().Select((kernel) =>
 			{
+				// Run all iterations in parallel
 				Enumerable.Range(0, TotalSamplesForBiasAndVariance).AsParallel().Select((i) =>
 				{
 					Console.WriteLine("Doing loop {0} for kernel {1}", i, kernel);
@@ -74,10 +75,10 @@ namespace Problem4SVM
 					string trainingModelPath = trainingPath + ".model";
 					string outputPath = svmOutputPath + postFix;
 
-					List<List<DataSetValue>> differentTrainingData = Bagging.ProduceDifferentDataSets(trainingData.Values, 1, rnd);
-					LibSvmConverter.ConvertToLibSvm(differentTrainingData.Single(), trainingPath);
 					if (!File.Exists(trainingModelPath))
 					{
+						List<List<DataSetValue>> differentTrainingData = Bagging.ProduceDifferentDataSets(trainingData.Values, 1, rnd);
+						LibSvmConverter.ConvertToLibSvm(differentTrainingData.Single(), trainingPath);
 						RunTrainingExe(trainingPath, kernel);
 					}
 					if (!File.Exists(outputPath))
@@ -86,7 +87,8 @@ namespace Problem4SVM
 					}
 					return 0;
 				}).ToList();
-			}
+				return 0;
+			}).ToList();
 
 			foreach (var kernel in kernelsToRunIn)
 			{

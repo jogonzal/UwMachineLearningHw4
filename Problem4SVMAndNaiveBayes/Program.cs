@@ -12,7 +12,7 @@ namespace Problem4SVM
 	class Program
 	{
 		public static int PercentilesToBreakIn = 10;
-		public static int TotalSamplesForBiasAndVariance = 3;
+		public static int TotalSamplesForBiasAndVariance = 4;
 
 		private static string DataSetPath => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\bankddefaultdataset\training.csv");
 		private static string TestSetPath => Path.Combine(Directory.GetCurrentDirectory() + @"\..\..\..\bankddefaultdataset\testing.csv");
@@ -42,12 +42,12 @@ namespace Problem4SVM
 
 			Random rnd = new Random();
 			Console.WriteLine("Reading training data...");
-			ParserResults trainingData = ParserUtils.ParseData(DataSetPath, convertContinuousValues:false);
+			ParserResults trainingData = ParserUtils.ParseData(DataSetPath, convertContinuousValues:true);
 			Console.WriteLine("Validating training set");
 			DataSetCleaner.ValidateDataSet(trainingData.Attributes, trainingData.Values);
 
 			Console.WriteLine("Getting test set...");
-			ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes, convertContinuousValues: false);
+			ParserResults testData = ParserUtils.ParseData(TestSetPath, trainingData.Attributes, convertContinuousValues: true);
 			Console.WriteLine("Validating test set");
 			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
 
@@ -63,10 +63,10 @@ namespace Problem4SVM
 			LibSvmConverter.ConvertToLibSvm(trainingData.Values, "originalTraining.txt");
 
 			// Run all kernels in parallel
-			kernelsToRunIn.AsParallel().Select((kernel) =>
+			kernelsToRunIn.Select((kernel) =>
 			{
 				// Run all iterations in parallel
-				Enumerable.Range(0, TotalSamplesForBiasAndVariance).AsParallel().Select((i) =>
+				Enumerable.Range(0, TotalSamplesForBiasAndVariance).Select((i) =>
 				{
 					Console.WriteLine("Doing loop {0} for kernel {1}", i, kernel);
 

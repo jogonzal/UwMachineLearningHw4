@@ -53,17 +53,25 @@ namespace Problem4SVM
 			Console.WriteLine("Validating test set");
 			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
 
-			Dictionary<string, BucketCount> naiveBayesTrainingDataStructure = NaiveBayesDataTransform.CountSamples(trainingData.Values, trainingData.Attributes);
+			var naiveBayesPredictor = TrainNaiveBayes(trainingData);
+			EvaluateNaiveBayesPredictor(testData, naiveBayesPredictor);
 
-			double probabilityOfOne = 1.0 * trainingData.Values.Count(t => t.Output) / trainingData.Values.Count;
+			var endTime = DateTime.Now;
+			Console.WriteLine(endTime);
+			var totalMinutes = (endTime - startTime).TotalMinutes;
+			Console.WriteLine("Took {0} minutes.", totalMinutes);
+			Console.WriteLine("Press any key to quit...");
+			Console.ReadKey();
+		}
 
+		private static void EvaluateNaiveBayesPredictor(ParserResults testData, NaiveBayesCalculator naiveBayesPredictor)
+		{
 			Console.WriteLine("Making predictions...");
 			uint hits = 0, misses = 0;
 			uint falsePositives = 0, falseNegatives = 0;
 			foreach (var testExample in testData.Values)
 			{
-				var probabilityOfZeroAndOne = NaiveBayesCalculator.ObtainProbabilityOfZeroAndOne(testExample.Values, naiveBayesTrainingDataStructure, probabilityOfOne);
-				bool isOnePrediction = (probabilityOfZeroAndOne.Item2) > probabilityOfZeroAndOne.Item1 * 4.5;
+				var isOnePrediction = naiveBayesPredictor.CalculatePrediction(testExample);
 				if (isOnePrediction && testExample.Output)
 				{
 					hits++;
@@ -88,15 +96,20 @@ namespace Problem4SVM
 				}
 			}
 
-			Console.WriteLine("Score: {0}%. Hits: {1}, Misses: {2}", 100.0 * hits / (misses + hits), hits, misses);
+			Console.WriteLine("Score: {0}%. Hits: {1}, Misses: {2}", 100.0*hits/(misses + hits), hits, misses);
 			Console.WriteLine("FalsePositives: {0}. FalseNegatives: {1}", falsePositives, falseNegatives);
+		}
 
-			var endTime = DateTime.Now;
-			Console.WriteLine(endTime);
-			var totalMinutes = (endTime - startTime).TotalMinutes;
-			Console.WriteLine("Took {0} minutes.", totalMinutes);
-			Console.WriteLine("Press any key to quit...");
-			Console.ReadKey();
+		private static NaiveBayesCalculator TrainNaiveBayes(ParserResults trainingData)
+		{
+			Dictionary<string, BucketCount> naiveBayesTrainingDataStructure =
+				NaiveBayesDataTransform.CountSamples(trainingData.Values, trainingData.Attributes);
+
+			double probabilityOfOne = 1.0*trainingData.Values.Count(t => t.Output)/trainingData.Values.Count;
+
+			var bayesPredictor = new NaiveBayesCalculator(probabilityOfOne, naiveBayesTrainingDataStructure);
+
+			return bayesPredictor;
 		}
 	}
 }

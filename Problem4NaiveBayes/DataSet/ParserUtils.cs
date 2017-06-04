@@ -10,6 +10,11 @@ namespace Problem4NaiveBayes.DataSet
 	{
 		public List<DataSetAttribute> Attributes { get; set; }
 		public List<DataSetValue> Values { get; set; }
+		public int Count
+		{
+			get;
+			internal set;
+		}
 
 		public ParserResults(List<DataSetAttribute> attributes, List<DataSetValue> values)
 		{

@@ -1,37 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Problem4NaiveBayes.DataSet;
 using Problem4NaiveBayes.Parsing;
+using Problem4NaiveBayes.Statistics;
 
 namespace Problem4NaiveBayes.NaiveBayes
 {
-	public static class NaiveBayesCalculator
+	public class NaiveBayesCalculator : IPredictor
 	{
-		//public static double ObtainProbabilityOfSpam(IDictionary<string, uint> testWordsInEmail, Dictionary<string, WordCount> trainingEmails)
-		//{
-		//	double probabilitySpam = 0;
-		//	var totalWords = testWordsInEmail.Sum(w => w.Value);
-		//	foreach (var u in testWordsInEmail)
-		//	{
-		//		double wordWeight = 1.0 * u.Value / totalWords;
+		private Dictionary<string, BucketCount> naiveBayesTrainingDataStructure;
+		private double probabilityOfOne;
 
-		//		// Count all the times this word was spam
-		//		WordCount wordCount;
-		//		if (!trainingEmails.TryGetValue(u.Key, out wordCount))
-		//		{
-		//			// If we've never sen the word, then it's 50/50
-		//			wordCount = new WordCount();
-		//			wordCount.Add(false, 1);
-		//			wordCount.Add(true, 1);
-		//		}
-
-		//		double probabilityOfWordBeingSpam = 1.0 * wordCount.ZeroCount/(wordCount.ZeroCount + wordCount.OneCount);
-
-		//		probabilitySpam += wordWeight*probabilityOfWordBeingSpam;
-		//	}
-
-		//	return probabilitySpam;
-		//}
+		public NaiveBayesCalculator(double probabilityOfOne, Dictionary<string, BucketCount> naiveBayesTrainingDataStructure)
+		{
+			this.probabilityOfOne = probabilityOfOne;
+			this.naiveBayesTrainingDataStructure = naiveBayesTrainingDataStructure;
+		}
 
 		public static Tuple<double, double> ObtainProbabilityOfZeroAndOne(List<int> testValues, Dictionary<string, BucketCount> trainingEmails, double totalProbabilityOne)
 		{
@@ -64,6 +49,14 @@ namespace Problem4NaiveBayes.NaiveBayes
 			probabilityOne += Math.Log(totalProbabilityOne);
 
 			return new Tuple<double, double>(probabilityZero, probabilityOne);
+		}
+
+		public bool CalculatePrediction(DataSetValue testExample)
+		{
+			var probabilityOfZeroAndOne = NaiveBayesCalculator.ObtainProbabilityOfZeroAndOne(testExample.Values,
+					naiveBayesTrainingDataStructure, probabilityOfOne);
+			bool isOnePrediction = (probabilityOfZeroAndOne.Item2) > probabilityOfZeroAndOne.Item1 * 4.5;
+			return isOnePrediction;
 		}
 	}
 }

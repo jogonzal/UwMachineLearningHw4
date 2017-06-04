@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Problem1BiasAndVariance.Statistics;
 using Problem4NaiveBayes;
 using Problem4NaiveBayes.DataSet;
 using Problem4NaiveBayes.NaiveBayes;

@@ -7,16 +7,18 @@ namespace Problem4NaiveBayes.NaiveBayes
 {
 	public static class NaiveBayesDataTransform
 	{
-		public static Dictionary<string, BucketCount> CountSamples(List<DataSetValue> rows)
+		public static Dictionary<string, BucketCount> CountSamples(List<DataSetValue> rows, List<DataSetAttribute> attributes)
 		{
 			var bucketCounts = new Dictionary<string, BucketCount>();
-			foreach (var row in rows)
+			for (int rowIndex = 0; rowIndex < rows.Count; rowIndex++)
 			{
+				var row = rows[rowIndex];
+
 				bool output = row.Output;
 				for (int index = 0; index < row.Values.Count; index++)
 				{
 					var rowValue = row.Values[index];
-					string bucketKey = index + ":" + rowValue;
+					string bucketKey = BuildKey(index, rowValue);
 
 					BucketCount bucketCount;
 					if (!bucketCounts.TryGetValue(bucketKey, out bucketCount))
@@ -29,6 +31,11 @@ namespace Problem4NaiveBayes.NaiveBayes
 			}
 
 			return bucketCounts;
+		}
+
+		public static string BuildKey(int index, int value)
+		{
+			return index + ":" + value;
 		}
 	}
 }

@@ -22,5 +22,10 @@
 				ZeroCount++;
 			}
 		}
+
+		public override string ToString()
+		{
+			return $"One:{OneCount}\tZero:{ZeroCount}";
+		}
 	}
 }

@@ -33,36 +33,37 @@ namespace Problem4NaiveBayes.NaiveBayes
 		//	return probabilitySpam;
 		//}
 
-		public static Tuple<double, double> ObtainProbabilityOfSpam(IDictionary<string, uint> testWordsInEmail, Dictionary<string, BucketCount> trainingEmails, double totalProbabilitySpam, int totalNumberOfWords)
+		public static Tuple<double, double> ObtainProbabilityOfZeroAndOne(List<int> testValues, Dictionary<string, BucketCount> trainingEmails, double totalProbabilityOne)
 		{
-			double probabilitySpam = 0, probabilityHam = 0;
-			double totalProbabilityHam = 1 - totalProbabilitySpam;
-			var totalWords = testWordsInEmail.Sum(w => w.Value);
-			foreach (var u in testWordsInEmail)
+			double probabilityZero = 0, probabilityOne = 0;
+			double totalProbabilityZero = 1 - totalProbabilityOne;
+			for (int index = 0; index < testValues.Count; index++)
 			{
-				double wordWeight = 1.0 * u.Value / totalWords;
-
+				var testValue = testValues[index];
+				string key = NaiveBayesDataTransform.BuildKey(index, testValue);
 				// Count all the times this word was spam
 				BucketCount bucketCount;
-				if (!trainingEmails.TryGetValue(u.Key, out bucketCount))
+				if (!trainingEmails.TryGetValue(key, out bucketCount))
 				{
 					// laplace smoothing
 					bucketCount = new BucketCount();
 				}
 
-				const double smoothingNum = 100; // Feel free to change this #
+				const double smoothingNum = 0.1; // Feel free to change this #
 
-				double probabilityOfWordBeingSpam = (1.0 * bucketCount.ZeroCount + smoothingNum) / (bucketCount.ZeroCount + bucketCount.OneCount + smoothingNum);
-				double probabilityOfWordBeingHam = (1.0 * bucketCount.OneCount + smoothingNum) / (bucketCount.ZeroCount + bucketCount.OneCount + smoothingNum);
+				double probabilityOfExampleBeingZero = (1.0*bucketCount.ZeroCount + smoothingNum)/
+									(bucketCount.ZeroCount + bucketCount.OneCount + smoothingNum);
+				double probabilityOfExampleBeingOne = (1.0*bucketCount.OneCount + smoothingNum)/
+									(bucketCount.ZeroCount + bucketCount.OneCount + smoothingNum);
 
-				probabilitySpam += Math.Log(probabilityOfWordBeingSpam);
-				probabilityHam += Math.Log(probabilityOfWordBeingHam);
+				probabilityZero += Math.Log(probabilityOfExampleBeingZero);
+				probabilityOne += Math.Log(probabilityOfExampleBeingOne);
 			}
 
-			probabilitySpam += Math.Log(totalProbabilitySpam);
-			probabilityHam += Math.Log(totalProbabilityHam);
+			probabilityZero += Math.Log(totalProbabilityZero);
+			probabilityOne += Math.Log(totalProbabilityOne);
 
-			return new Tuple<double, double>(probabilitySpam, probabilityHam);
+			return new Tuple<double, double>(probabilityZero, probabilityOne);
 		}
 	}
 }

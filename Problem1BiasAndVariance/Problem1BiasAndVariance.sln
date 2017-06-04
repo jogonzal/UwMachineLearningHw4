@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UwMachineLearningHw4UnitTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Problem4SVM", "..\Problem4SVMAndNaiveBayes\Problem4SVM.csproj", "{25B0B2EE-6D8E-4C52-AF62-8DDDED800E48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Problem4NaiveBayes", "Problem4NaiveBayes\Problem4NaiveBayes.csproj", "{8D5E7D21-3AF4-4C91-8AAE-B83F13E44C9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Problem4NaiveBayes", "..\Problem4NaiveBayes\Problem4NaiveBayes.csproj", "{8D5E7D21-3AF4-4C91-8AAE-B83F13E44C9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

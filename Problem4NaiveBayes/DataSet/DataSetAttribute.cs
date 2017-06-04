@@ -15,7 +15,7 @@ namespace Problem4NaiveBayes.DataSet
 		{
 			Name = name;
 			PossibleValues = possibleValues;
-			ValueIndex = valueIndex;
+			ValueIndex = valueIndex - 1;
 		}
 
 		public override string ToString()

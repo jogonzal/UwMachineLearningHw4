@@ -29,8 +29,14 @@ namespace Problem4SVM.DataSet
 				var split = line.Split(new [] {','});
 
 				List<int> values = new List<int>();
+				bool isFirst = true;
 				foreach (var s in split)
 				{
+					if (isFirst)
+					{
+						isFirst = false;
+						continue;
+					}
 					values.Add(int.Parse(s));
 				}
 

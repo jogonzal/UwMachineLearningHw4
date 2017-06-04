@@ -90,6 +90,7 @@ namespace Problem4SVM
 				return 0;
 			}).ToList();
 
+			// Evaluate bias and variance
 			foreach (var kernel in kernelsToRunIn)
 			{
 				List<List<bool>> allPredictions = new List<List<bool>>();

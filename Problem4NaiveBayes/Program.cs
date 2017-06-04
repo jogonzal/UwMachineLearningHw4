@@ -63,7 +63,7 @@ namespace Problem4SVM
 			foreach (var testExample in testData.Values)
 			{
 				var probabilityOfZeroAndOne = NaiveBayesCalculator.ObtainProbabilityOfZeroAndOne(testExample.Values, naiveBayesTrainingDataStructure, probabilityOfOne);
-				bool isOnePrediction = (probabilityOfZeroAndOne.Item2 + 27/* Offset adjustment */) > probabilityOfZeroAndOne.Item1;
+				bool isOnePrediction = (probabilityOfZeroAndOne.Item2) > probabilityOfZeroAndOne.Item1 * 4.5;
 				if (isOnePrediction && testExample.Output)
 				{
 					hits++;

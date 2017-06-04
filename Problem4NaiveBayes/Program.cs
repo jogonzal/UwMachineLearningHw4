@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Problem1BiasAndVariance.Statistics;
+using Problem4NaiveBayes;
 using Problem4NaiveBayes.DataSet;
 using Problem4NaiveBayes.NaiveBayes;
 using Problem4NaiveBayes.Parsing;
+using Problem4NaiveBayes.Statistics;
 
 namespace Problem4SVM
 {
@@ -53,8 +56,21 @@ namespace Problem4SVM
 			Console.WriteLine("Validating test set");
 			DataSetCleaner.ValidateDataSet(testData.Attributes, testData.Values);
 
-			var naiveBayesPredictor = TrainNaiveBayes(trainingData);
-			EvaluateNaiveBayesPredictor(testData, naiveBayesPredictor);
+			List<List<DataSetValue>> differentDataSets = Bagging.ProduceDifferentDataSets(trainingData.Values, TotalSamplesForBiasAndVariance, rnd);
+			List<IPredictor> naiveBayesPredictors = new List<IPredictor>();
+			foreach (var differentTrainingDataSet in differentDataSets)
+			{
+				var naiveBayesPredictor = TrainNaiveBayes(differentTrainingDataSet);
+				naiveBayesPredictors.Add(naiveBayesPredictor);
+			}
+
+			double bias;
+			double variance = BiasAndVarianceCalculator.CalculateBiasAndVariance(trainingData, naiveBayesPredictors, out bias);
+
+			Console.WriteLine($"Bias:{bias} Variance:{variance}");
+
+			var originalNaiveBayesPredictor = TrainNaiveBayes(trainingData.Values);
+			EvaluateNaiveBayesPredictor(testData, originalNaiveBayesPredictor);
 
 			var endTime = DateTime.Now;
 			Console.WriteLine(endTime);
@@ -100,12 +116,12 @@ namespace Problem4SVM
 			Console.WriteLine("FalsePositives: {0}. FalseNegatives: {1}", falsePositives, falseNegatives);
 		}
 
-		private static NaiveBayesCalculator TrainNaiveBayes(ParserResults trainingData)
+		private static NaiveBayesCalculator TrainNaiveBayes(List<DataSetValue> trainingValues)
 		{
 			Dictionary<string, BucketCount> naiveBayesTrainingDataStructure =
-				NaiveBayesDataTransform.CountSamples(trainingData.Values, trainingData.Attributes);
+				NaiveBayesDataTransform.CountSamples(trainingValues);
 
-			double probabilityOfOne = 1.0*trainingData.Values.Count(t => t.Output)/trainingData.Values.Count;
+			double probabilityOfOne = 1.0* trainingValues.Count(t => t.Output)/ trainingValues.Count;
 
 			var bayesPredictor = new NaiveBayesCalculator(probabilityOfOne, naiveBayesTrainingDataStructure);
 

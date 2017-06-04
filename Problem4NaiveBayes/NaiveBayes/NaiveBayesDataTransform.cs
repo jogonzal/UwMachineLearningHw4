@@ -7,7 +7,7 @@ namespace Problem4NaiveBayes.NaiveBayes
 {
 	public static class NaiveBayesDataTransform
 	{
-		public static Dictionary<string, BucketCount> CountSamples(List<DataSetValue> rows, List<DataSetAttribute> attributes)
+		public static Dictionary<string, BucketCount> CountSamples(List<DataSetValue> rows)
 		{
 			var bucketCounts = new Dictionary<string, BucketCount>();
 			for (int rowIndex = 0; rowIndex < rows.Count; rowIndex++)

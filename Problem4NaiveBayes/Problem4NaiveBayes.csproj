@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bagging.cs" />
     <Compile Include="DataSet\DataSetAttribute.cs" />
     <Compile Include="DataSet\DataSetCleaner.cs" />
     <Compile Include="DataSet\DataSetValue.cs" />
